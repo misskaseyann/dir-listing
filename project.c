@@ -5,6 +5,8 @@
 #include <dirent.h>
 #include <errno.h>
 #include <string.h>
+#include <pwd.h>
+#include <grp.h>
 
 /*******************************
  * Lab Week 12
@@ -20,6 +22,10 @@ int main (int argc, char *argv[]) {
 	struct dirent *entryPtr;
 	// inode information.
 	struct stat statBuf;
+	// Password information.
+	struct passwd *pwd;
+	// Group ID information.
+	struct group *grp;
 	// -n and -i bools.
 	int inode_n = 0, file_id = 0;
 	// File path.
@@ -50,7 +56,32 @@ int main (int argc, char *argv[]) {
 
 	// Loop through entries in directory file.
 	while ((entryPtr = readdir(dirPtr))) {
-		printf("%-20s\n", entryPtr->d_name);
+		printf("%-20s ", entryPtr->d_name);
+		// Do we have extra arguments to process?
+		if (stat(entryPtr->d_name, &statBuf) < 0)
+				perror("huh? there is ");
+
+		// Add user and group ID for each file?
+		if (file_id) {
+			// Print out owners name if found using getpwuid()
+			if ((pwd = getpwuid(statBuf.st_uid)) != NULL)
+				printf("%-8.8s ", pwd->pw_name);
+			else
+				printf("%-8d ", statBuf.st_uid);
+
+			// Print out group name if found using getgrgid()
+			if ((grp = getgrgid(statBuf.st_gid)) != NULL)
+				printf("%-8.8s ", grp->gr_name);
+			else
+				printf("%-8d ", statBuf.st_gid);
+		}
+
+		// Add inode # for each file?
+		if (inode_n) {
+			printf("%-8llu ", statBuf.st_ino);
+		}
+
+		printf("\n");
 	}
 
 	// Close everything up and exit.
