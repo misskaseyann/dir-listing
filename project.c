@@ -34,17 +34,14 @@ int main (int argc, char *argv[]) {
 	// Check command line arguments.
 	for (int i = 1; i < argc; i++) {
 		if (strcmp("-i", argv[i]) == 0) {
-			file_id = 1;
-			printf("-i was found\n");
-		} else if (strcmp("-n", argv[i]) == 0) {
 			inode_n = 1;
-			printf("-n was found\n");
+		} else if (strcmp("-n", argv[i]) == 0) {
+			file_id = 1;
 		}
 	}
 
 	// Was a file path given?
 	if (argc > 1 && strchr(argv[argc - 1], '/') != NULL) {
-		printf("file path given.\n");
 		strcpy(fp, argv[argc - 1]);
 	}
 	
@@ -58,8 +55,7 @@ int main (int argc, char *argv[]) {
 	while ((entryPtr = readdir(dirPtr))) {
 		printf("%-20s ", entryPtr->d_name);
 		// Do we have extra arguments to process?
-		if (stat(entryPtr->d_name, &statBuf) < 0)
-				perror("huh? there is ");
+		stat(entryPtr->d_name, &statBuf);
 
 		// Add user and group ID for each file?
 		if (file_id) {
@@ -78,7 +74,7 @@ int main (int argc, char *argv[]) {
 
 		// Add inode # for each file?
 		if (inode_n) {
-			printf("%-8llu ", statBuf.st_ino);
+			printf("%llu ", statBuf.st_ino);
 		}
 
 		printf("\n");
