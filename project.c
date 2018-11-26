@@ -42,5 +42,18 @@ int main (int argc, char *argv[]) {
 		strcpy(fp, argv[argc - 1]);
 	}
 	
-	
+	// Open the directory.
+	if ((dirPtr = opendir(fp)) == NULL) {
+		printf("Not a directory.\n");
+		return 1;
+	}
+
+	// Loop through entries in directory file.
+	while ((entryPtr = readdir(dirPtr))) {
+		printf("%-20s\n", entryPtr->d_name);
+	}
+
+	// Close everything up and exit.
+	closedir(dirPtr);
+	return 0;
 }
