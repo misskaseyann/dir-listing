@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
 
 		// Add inode # for each file?
 		if (inode_n) {
-			printf("%llu ", statBuf.st_ino);
+			printf("%lu ", statBuf.st_ino);
 		}
 
 		printf("\n");
