@@ -73,7 +73,7 @@ int main (int argc, char *argv[]) {
 		    printf( (statBuf.st_mode & S_IXOTH) ? "x" : "-");
 
 			// Print the number of links.
-			printf("%-8d ", statBuf.st_nlink);
+			printf("%4d ", statBuf.st_nlink);
 
 			// Print out owners name if found using getpwuid()
 			if ((pwd = getpwuid(statBuf.st_uid)) != NULL)
