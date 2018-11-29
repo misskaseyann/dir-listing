@@ -40,7 +40,7 @@ int main (int argc, char *argv[]) {
 		}
 	}
 
-	// Was a file path given?
+	// Was a file path given.
 	if (argc > 1 && strchr(argv[argc - 1], '/') != NULL) {
 		strcpy(fp, argv[argc - 1]);
 	}
@@ -57,7 +57,7 @@ int main (int argc, char *argv[]) {
 		// Do we have extra arguments to process?
 		stat(entryPtr->d_name, &statBuf);
 
-		// Add user and group ID for each file?
+		// Add user and group ID for each file.
 		if (file_id) {
 			// Print out owners name if found using getpwuid()
 			if ((pwd = getpwuid(statBuf.st_uid)) != NULL)
@@ -72,7 +72,7 @@ int main (int argc, char *argv[]) {
 				printf("%-8d ", statBuf.st_gid);
 		}
 
-		// Add inode # for each file?
+		// Add inode # for each file.
 		if (inode_n) {
 			printf("%lu ", statBuf.st_ino);
 		}
