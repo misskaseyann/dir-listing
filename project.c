@@ -7,6 +7,7 @@
 #include <string.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 
 /*******************************
  * Lab Week 12
@@ -53,12 +54,27 @@ int main (int argc, char *argv[]) {
 
 	// Loop through entries in directory file.
 	while ((entryPtr = readdir(dirPtr))) {
-		printf("%-20s ", entryPtr->d_name);
-		// Do we have extra arguments to process?
+		// Do we have extra arguments to process.
 		stat(entryPtr->d_name, &statBuf);
 
 		// Add user and group ID for each file.
 		if (file_id) {
+			// Print out mode.
+			// https://stackoverflow.com/questions/10323060/printing-file-permissions-like-ls-l-using-stat2-in-c
+			printf( (S_ISDIR(statBuf.st_mode)) ? "d" : "-");
+		    printf( (statBuf.st_mode & S_IRUSR) ? "r" : "-");
+		    printf( (statBuf.st_mode & S_IWUSR) ? "w" : "-");
+		    printf( (statBuf.st_mode & S_IXUSR) ? "x" : "-");
+		    printf( (statBuf.st_mode & S_IRGRP) ? "r" : "-");
+		    printf( (statBuf.st_mode & S_IWGRP) ? "w" : "-");
+		    printf( (statBuf.st_mode & S_IXGRP) ? "x" : "-");
+		    printf( (statBuf.st_mode & S_IROTH) ? "r" : "-");
+		    printf( (statBuf.st_mode & S_IWOTH) ? "w" : "-");
+		    printf( (statBuf.st_mode & S_IXOTH) ? "x" : "-");
+
+			// Print the number of links.
+			printf("%-8d ", statBuf.st_nlink);
+
 			// Print out owners name if found using getpwuid()
 			if ((pwd = getpwuid(statBuf.st_uid)) != NULL)
 				printf("%-8.8s ", pwd->pw_name);
@@ -70,6 +86,19 @@ int main (int argc, char *argv[]) {
 				printf("%-8.8s ", grp->gr_name);
 			else
 				printf("%-8d ", statBuf.st_gid);
+
+			// Print the total size, in bytes.
+			printf("%-8lld ", statBuf.st_size);
+
+			// Format the time.
+			time_t t = statBuf.st_mtime;
+			struct tm lt;
+			char mtime[80];
+			localtime_r(&t, &lt);
+			strftime(mtime, sizeof(mtime), "%b %d %T", &lt);
+			// Print time of last modification.
+			printf("%s ", mtime);
+
 		}
 
 		// Add inode # for each file.
@@ -77,7 +106,8 @@ int main (int argc, char *argv[]) {
 			printf("%lu ", statBuf.st_ino);
 		}
 
-		printf("\n");
+		// Print name of file.
+		printf("%-20s\n", entryPtr->d_name);
 	}
 
 	// Close everything up and exit.
